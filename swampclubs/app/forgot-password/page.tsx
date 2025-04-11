@@ -1,10 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,11 +19,19 @@ export default function ForgotPasswordPage() {
     setIsLoading(true)
 
     try {
-      // This is where you would integrate with your auth provider
-      // For example: await sendPasswordResetEmail(email)
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Request failed');
+      }
 
       setSubmitted(true)
       toast("Reset link sent", {
@@ -33,7 +40,7 @@ export default function ForgotPasswordPage() {
     } catch (error) {
       toast("Error", {
         description: "There was a problem sending the reset link. Please try again.",
-        style: { backgroundColor: 'var(--destructive)', color: 'var(--destructive-foreground)' }
+        style: { backgroundColor: "var(--destructive)", color: "var(--destructive-foreground)" },
       })
     } finally {
       setIsLoading(false)
@@ -65,7 +72,7 @@ export default function ForgotPasswordPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="name@ufl.edu"
+                placeholder="name@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

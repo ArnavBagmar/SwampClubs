@@ -1,11 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Eye, EyeOff, ArrowLeft, Github } from "lucide-react"
+import { Eye, EyeOff, ArrowLeft} from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,24 +15,37 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const router = useRouter()
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
-      // This is where you would integrate with your auth provider
-      // For example: await signIn('credentials', { email, password })
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-      // Simulate authentication delay
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // Store token in localStorage
+      localStorage.setItem('token', data.token);
+      
       toast("Success!", {
         description: "You have successfully logged in.",
       })
 
-      router.push("/dashboard")
+      // Simply set authentication state to true
+      setIsAuthenticated(true)
+      
     } catch (error) {
       toast("Error", {
         description: "Invalid email or password. Please try again.",
@@ -43,6 +54,23 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Login Successful!</h2>
+          <p className="mb-6">You're now logged in to SwampClubs</p>
+          <Link 
+            href="/dashboard"
+            className="inline-block px-6 py-3 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-medium transition-colors"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -62,7 +90,7 @@ export default function LoginPage() {
 
           <div className="space-y-2 mb-8">
             <h1 className="text-3xl font-bold">Welcome back, Gator</h1>
-            <p className="text-muted-foreground">Enter your information to access the SwampClubs community</p>
+            <p className="text-muted-foreground">Enter your information to access the SwampClubs</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -72,7 +100,7 @@ export default function LoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="name@ufl.edu"
+                  placeholder="name@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -118,25 +146,7 @@ export default function LoginPage() {
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
 
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <Separator className="w-full" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-background px-2 text-xs text-muted-foreground">OR CONTINUE WITH</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Button
-                variant="outline"
-                className="rounded-full border-blue-600 text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-950"
-                disabled={isLoading}
-              >
-                <Github className="mr-2 h-4 w-4" />
-                Google
-              </Button>
-            </div>
+          
 
             <div className="text-center text-sm">
               Don&apos;t have an account?{" "}
@@ -147,7 +157,6 @@ export default function LoginPage() {
           </form>
         </div>
 
-        {/* Right side - Branding */}
         <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-orange-500 to-blue-600 text-white p-12 lg:p-16 items-center justify-center">
           <div className="max-w-md space-y-6">
             <div className="flex items-center gap-2 font-bold text-2xl">
@@ -156,16 +165,15 @@ export default function LoginPage() {
             </div>
             <h2 className="text-3xl font-bold">Connect with UF Clubs and Students</h2>
             <p className="text-white/90">
-              Join thousands of fellow Gators who use SwampClubs to discover clubs, attend events, and build connections
-              on campus.
+              Join fellow Gators who use SwampClubs to discover clubs, attend events, and build connections on campus.
             </p>
             <div className="grid grid-cols-2 gap-4 pt-4">
               <div className="bg-white/10 rounded-lg p-4">
-                <div className="font-bold text-xl">200+</div>
+                <div className="font-bold text-xl">100+</div>
                 <div className="text-white/80 text-sm">Active clubs</div>
               </div>
               <div className="bg-white/10 rounded-lg p-4">
-                <div className="font-bold text-xl">5,000+</div>
+                <div className="font-bold text-xl">1,000+</div>
                 <div className="text-white/80 text-sm">UF students</div>
               </div>
             </div>
@@ -175,4 +183,3 @@ export default function LoginPage() {
     </div>
   )
 }
-
