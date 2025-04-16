@@ -1,14 +1,11 @@
 "use client"
 
-import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { Eye, EyeOff, ArrowLeft} from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 
 export default function SignupPage() {
@@ -17,9 +14,8 @@ export default function SignupPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
 
@@ -33,24 +29,33 @@ export default function SignupPage() {
       });
 
       const data = await response.json();
+      console.log("Signup response:", data);
 
       if (!response.ok) {
         throw new Error(data.error || 'Signup failed');
       }
 
-      // Store token in localStorage or cookies
+      // Store token in localStorage
       localStorage.setItem('token', data.token);
+      console.log("Token stored:", data.token);
       
       toast("Account created!", {
         description: "You have successfully created an account.",
-      })
+      });
 
-      router.push("/dashboard")
+      // Create a form and submit it to force a server-side navigation
+      const form = document.createElement('form');
+      form.method = 'GET';
+      form.action = '/dashboard';
+      document.body.appendChild(form);
+      form.submit();
+      
     } catch (error) {
+      console.error("Signup error:", error);
       toast("Error", {
-        description: "There was a problem creating your account. Please try again.",
+        description: error.message || "There was a problem creating your account. Please try again.",
         style: { backgroundColor: "var(--destructive)", color: "var(--destructive-foreground)" },
-      })
+      });
     } finally {
       setIsLoading(false)
     }
@@ -127,7 +132,7 @@ export default function SignupPage() {
             </div>
 
             <Button type="submit" className="w-full rounded-full bg-orange-500 hover:bg-orange-600 text-white" disabled={isLoading}>
-              {isLoading ? "Making your account YAYYYY" : "Create account"}
+              {isLoading ? "Creating your account..." : "Create account"}
             </Button>
 
             <div className="text-center text-sm">
@@ -176,4 +181,3 @@ export default function SignupPage() {
     </div>
   )
 }
-

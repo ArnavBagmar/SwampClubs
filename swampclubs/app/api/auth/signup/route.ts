@@ -30,6 +30,25 @@ export async function POST(request: Request) {
       });
       console.log(`User created successfully with ID: ${user._id}`);
       
+      // Generate JWT token
+      const token = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_SECRET || 'fallback-secret-key',
+        { expiresIn: '7d' }
+      );
+      
+      // Return success response with token and user info
+      return NextResponse.json({
+        success: true,
+        message: 'User created successfully',
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+        }
+      });
+      
     } catch (error) {
       console.error('Signup error:', error);
       return NextResponse.json(

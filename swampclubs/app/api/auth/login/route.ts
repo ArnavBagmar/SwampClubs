@@ -6,15 +6,18 @@ import jwt from 'jsonwebtoken';
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
+    console.log(`Attempting to login user with email: ${email}`);
     
     // Connect to the database
     await connectToDatabase();
+    console.log('Connected to database for login');
     
     // Find user by email and include password for comparison
     const user = await User.findOne({ email }).select('+password');
     
     // Check if user exists
     if (!user) {
+      console.log(`User with email ${email} not found`);
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
@@ -23,7 +26,10 @@ export async function POST(request: Request) {
     
     // Check if password matches
     const isPasswordValid = await user.comparePassword(password);
+    console.log(`Password validation result: ${isPasswordValid}`);
+    
     if (!isPasswordValid) {
+      console.log('Password validation failed');
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
@@ -33,9 +39,11 @@ export async function POST(request: Request) {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET!,
+      process.env.JWT_SECRET || 'fallback-secret-key',
       { expiresIn: '7d' }
     );
+    
+    console.log(`Login successful for user: ${user._id}`);
     
     // Return success response
     return NextResponse.json({
