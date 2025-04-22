@@ -4,12 +4,13 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import MessageList from "@/components/Messages/messageList"
+import MessageForm from "@/components/Messages/messageForm"
 
 export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
-    // This is a placeholder to show the dashboard after login/signup
     toast("Welcome to your dashboard!", {
       description: "This is a placeholder dashboard page after successful authentication.",
     })
@@ -37,7 +38,9 @@ export default function DashboardPage() {
 
       <main className="flex-1 container py-12">
         <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+        
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Cards */}
           <div className="border rounded-lg p-6 bg-card">
             <h2 className="text-xl font-semibold mb-2">Welcome to SwampClubs</h2>
             <p className="text-muted-foreground mb-4">
@@ -47,7 +50,7 @@ export default function DashboardPage() {
               Return to Home
             </Button>
           </div>
-          
+
           <div className="border rounded-lg p-6 bg-card">
             <h2 className="text-xl font-semibold mb-2">Upcoming Events</h2>
             <p className="text-muted-foreground mb-4">
@@ -57,7 +60,7 @@ export default function DashboardPage() {
               Explore Clubs
             </Button>
           </div>
-          
+
           <div className="border rounded-lg p-6 bg-card">
             <h2 className="text-xl font-semibold mb-2">My Clubs</h2>
             <p className="text-muted-foreground mb-4">
@@ -67,6 +70,15 @@ export default function DashboardPage() {
               Find Clubs
             </Button>
           </div>
+        </div>
+
+        {/* Discussion Board */}
+        <div className="border rounded-lg p-6 mt-12 bg-card col-span-full">
+          <h2 className="text-xl font-semibold mb-4">Discussion Board</h2>
+          <div className="h-[400px] overflow-y-auto flex flex-col space-y-2 mb-4 p-2 bg-white rounded-md border">
+            <MessageList messages={[]} />
+          </div>
+          <MessageForm onNewMessage={(msg) => console.log("New message:", msg)} />
         </div>
       </main>
     </div>
