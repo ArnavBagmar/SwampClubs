@@ -6,13 +6,11 @@ import {
   Calendar, 
   MessageSquare, 
   Search, 
-  Users, 
-  Plus, 
+  Users,
   Bell, 
   LogOut, 
   ChevronRight,
-  CheckCircle2,
-  Compass
+  CheckCircle2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -109,18 +107,20 @@ export default function DashboardPage() {
   ]
 
   useEffect(() => {
-    // Simulate loading
+    // Simulate fetching user data
     const timer = setTimeout(() => {
-      setIsLoading(false)
+      setIsLoading(false);
+      // Use setUserName 
+      setUserName("Gator User"); 
       
       // Show welcome toast
       toast("Welcome to your dashboard!", {
         description: "You've successfully accessed the SwampClubs dashboard.",
-      })
-    }, 1000)
+      });
+    }, 1000);
     
-    return () => clearTimeout(timer)
-  }, [])
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLogout = () => {
     // Clear the token from localStorage
@@ -268,7 +268,7 @@ export default function DashboardPage() {
                 {myClubs.length === 0 ? (
                   <div className="text-center p-8 border rounded-xl bg-muted/30">
                     <Users className="size-8 mx-auto mb-2 text-muted-foreground" />
-                    <h3 className="font-medium mb-1">You haven't joined any clubs yet</h3>
+                    <h3 className="font-medium mb-1">You haven&apos;t joined any clubs yet</h3>
                     <p className="text-sm text-muted-foreground mb-4">
                       Find and join clubs to connect with fellow Gators
                     </p>
@@ -375,7 +375,7 @@ export default function DashboardPage() {
                     </Button>
                   </Link>
                 </CardTitle>
-                <CardDescription>Events from clubs you've joined</CardDescription>
+                <CardDescription>Events from clubs you&apos;ve joined</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {upcomingEvents.length === 0 ? (

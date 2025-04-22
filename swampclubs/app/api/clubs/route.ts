@@ -11,7 +11,6 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     
-    // Build query
     let query = {};
     if (category && category !== 'all') {
       query = { category };

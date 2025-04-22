@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Users } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -8,199 +9,101 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function PopularClubsSection() {
-  const clubsByCategory = {
-    all: [
-      {
-        name: "UF SASE",
-        members: 1000,
-        category: "Social",
-        description: "Empowers APIDA scientists and engineers through professional development, networking, service.",
-      },
-      {
-        name: "Business Leadership Association",
-        members: 723,
-        category: "Academic",
-        description: "Networking and professional development for business students.",
-      },
-      {
-        name: "Caribbean Student Association",
-        members: 615,
-        category: "Cultural",
-        description: "Celebrating Caribbean culture through events, food, and community.",
-      },
-      {
-        name: "Engineers Without Borders",
-        members: 587,
-        category: "Academic",
-        description: "Designing sustainable solutions for communities in need.",
-      },
-      {
-        name: "Gator Salsa Club",
-        members: 563,
-        category: "Social",
-        description: "Learn Latin dances including salsa, bachata, and merengue.",
-      },
-      {
-        name: "Environmental Action Group",
-        members: 548,
-        category: "Social",
-        description: "Advocating for sustainability initiatives on campus and beyond.",
-      },
-    ],
-    academic: [
-      {
-        name: "Dream Team Engineering",
-        members: 250,
-        category: "Academic",
-        description: "Designs and implements engineering innovations improving healthcare experiences for patients.",
-      },
-      {
-        name: "Engineers Without Borders",
-        members: 587,
-        category: "Academic",
-        description: "Designing sustainable solutions for communities in need.",
-      },
-      {
-        name: "Pre-Medical AMSA",
-        members: 512,
-        category: "Academic",
-        description: "Resources and support for pre-med students at UF.",
-      },
-      {
-        name: "Psychology Student Association",
-        members: 478,
-        category: "Academic",
-        description: "Academic and career resources for psychology majors.",
-      },
-      {
-        name: "Computer Science Club",
-        members: 463,
-        category: "Academic",
-        description: "Coding workshops, hackathons, and tech industry networking.",
-      },
-      {
-        name: "Future Educators of America",
-        members: 389,
-        category: "Academic",
-        description: "Supporting students pursuing careers in education.",
-      },
-    ],
-    cultural: [
-      {
-        name: "Caribbean Student Association",
-        members: 615,
-        category: "Cultural",
-        description: "Celebrating Caribbean culture through events, food, and community.",
-      },
-      {
-        name: "Hispanic Student Association",
-        members: 528,
-        category: "Cultural",
-        description: "Promoting Hispanic and Latino culture at UF.",
-      },
-      {
-        name: "Asian American Student Union",
-        members: 497,
-        category: "Cultural",
-        description: "Cultural events and community for Asian American students.",
-      },
-      {
-        name: "African Student Union",
-        members: 425,
-        category: "Cultural",
-        description: "Celebrating the diverse cultures of the African continent.",
-      },
-      {
-        name: "Indian Student Association",
-        members: 418,
-        category: "Cultural",
-        description: "Promoting Indian culture through festivals, food, and performances.",
-      },
-      {
-        name: "French Club",
-        members: 312,
-        category: "Cultural",
-        description: "Practicing French language and exploring French culture.",
-      },
-    ],
-    social: [
-      {
-        name: "Gator Gaming",
-        members: 842,
-        category: "Social",
-        description: "For all gamers at UF. We host tournaments, game nights, and discussions.",
-      },
-      {
-        name: "Gator Salsa Club",
-        members: 563,
-        category: "Social",
-        description: "Learn Latin dances including salsa, bachata, and merengue.",
-      },
-      {
-        name: "Environmental Action Group",
-        members: 548,
-        category: "Social",
-        description: "Advocating for sustainability initiatives on campus and beyond.",
-      },
-      {
-        name: "Running Club",
-        members: 437,
-        category: "Social",
-        description: "Weekly group runs for all experience levels around campus.",
-      },
-      {
-        name: "Photography Club",
-        members: 386,
-        category: "Social",
-        description: "Improving photography skills through workshops and photo walks.",
-      },
-      {
-        name: "Cooking Club",
-        members: 348,
-        category: "Social",
-        description: "Cooking workshops, recipe exchanges, and food-related events.",
-      },
-    ],
-  }
+  const [clubs, setClubs] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        setIsLoading(true)
+        const response = await fetch(`/api/clubs${selectedCategory !== 'all' ? `?category=${selectedCategory}` : ''}`)
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch clubs')
+        }
+        
+        const data = await response.json()
+        setClubs(data.clubs || [])
+      } catch (error) {
+        console.error('Error fetching clubs:', error)
+        setClubs([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    fetchClubs()
+  }, [selectedCategory])
 
-  const renderClubGrid = (category: "all" | "academic" | "cultural" | "social") => (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {clubsByCategory[category].map((club, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: i * 0.1 }}
-        >
-          <Card className="h-full overflow-hidden border-border/40 bg-gradient-to-b from-background to-muted/10 backdrop-blur transition-all hover:shadow-md">
-            <CardContent className="p-6 flex flex-col h-full">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-xl font-bold">{club.name}</h3>
-                <Badge variant="outline" className="text-xs">
-                  {club.category}
-                </Badge>
-              </div>
-              <p className="text-muted-foreground mb-4 flex-grow">{club.description}</p>
-              <div className="flex justify-between items-center mt-auto pt-4 border-t border-border/40">
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Users className="size-4 mr-1" />
-                  <span>{club.members} members</span>
+  const getClubsByCategory = (category) => {
+    if (category === "all") {
+      return clubs.slice(0, 6)
+    }
+    
+    return clubs
+      .filter(club => club.category.toLowerCase() === category.toLowerCase())
+      .slice(0, 6)
+  }
+  
+  const renderClubGrid = (category) => {
+    if (isLoading) {
+      return (
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-pulse">Loading clubs...</div>
+        </div>
+      )
+    }
+    
+    const clubsToShow = getClubsByCategory(category)
+    
+    if (clubsToShow.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">No clubs found in this category.</p>
+        </div>
+      )
+    }
+    
+    return (
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {clubsToShow.map((club, i) => (
+          <motion.div
+            key={club.id || i}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+          >
+            <Card className="h-full overflow-hidden border-border/40 bg-gradient-to-b from-background to-muted/10 backdrop-blur transition-all hover:shadow-md">
+              <CardContent className="p-6 flex flex-col h-full">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-xl font-bold">{club.name}</h3>
+                  <Badge variant="outline" className="text-xs">
+                    {club.category}
+                  </Badge>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="rounded-full text-orange-500 hover:text-orange-600 hover:bg-orange-500/10"
-                >
-                  Join Chat
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      ))}
-    </div>
-  )
+                <p className="text-muted-foreground mb-4 flex-grow">{club.description}</p>
+                <div className="flex justify-between items-center mt-auto pt-4 border-t border-border/40">
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Users className="size-4 mr-1" />
+                    <span>{club.members} members</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="rounded-full text-orange-500 hover:text-orange-600 hover:bg-orange-500/10"
+                  >
+                    Join Chat
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <section id="popular-clubs" className="w-full py-20 md:py-32 bg-muted/30 relative overflow-hidden">
@@ -224,31 +127,30 @@ export function PopularClubsSection() {
         </motion.div>
 
         <div className="mx-auto max-w-5xl">
-          <Tabs defaultValue="all" className="w-full">
+          <Tabs defaultValue="all" className="w-full" onValueChange={setSelectedCategory}>
             <div className="flex justify-center mb-8">
               <TabsList className="rounded-full p-1">
                 <TabsTrigger value="all" className="rounded-full px-6">
                   All
                 </TabsTrigger>
-                <TabsTrigger value="academic" className="rounded-full px-6">
+                <TabsTrigger value="Academic" className="rounded-full px-6">
                   Academic
                 </TabsTrigger>
-                <TabsTrigger value="cultural" className="rounded-full px-6">
+                <TabsTrigger value="Cultural" className="rounded-full px-6">
                   Cultural
                 </TabsTrigger>
-                <TabsTrigger value="social" className="rounded-full px-6">
+                <TabsTrigger value="Social" className="rounded-full px-6">
                   Social
                 </TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="all">{renderClubGrid("all")}</TabsContent>
-            <TabsContent value="academic">{renderClubGrid("academic")}</TabsContent>
-            <TabsContent value="cultural">{renderClubGrid("cultural")}</TabsContent>
-            <TabsContent value="social">{renderClubGrid("social")}</TabsContent>
+            <TabsContent value="Academic">{renderClubGrid("Academic")}</TabsContent>
+            <TabsContent value="Cultural">{renderClubGrid("Cultural")}</TabsContent>
+            <TabsContent value="Social">{renderClubGrid("Social")}</TabsContent>
           </Tabs>
         </div>
       </div>
     </section>
   )
 }
-

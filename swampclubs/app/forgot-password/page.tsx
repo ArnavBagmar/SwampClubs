@@ -26,26 +26,25 @@ export default function ForgotPasswordPage() {
         },
         body: JSON.stringify({ email }),
       });
-
+    
       const data = await response.json();
-
+    
       if (!response.ok) {
         throw new Error(data.error || 'Request failed');
       }
-
+    
       setSubmitted(true)
       toast("Reset link sent", {
         description: "If an account exists with that email, you'll receive a password reset link.",
       })
-    } catch (error) {
+    } catch (err) {
+      // Use the error or rethrow it
+      console.error('Password reset error:', err);
       toast("Error", {
         description: "There was a problem sending the reset link. Please try again.",
         style: { backgroundColor: "var(--destructive)", color: "var(--destructive-foreground)" },
       })
-    } finally {
-      setIsLoading(false)
     }
-  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -85,7 +84,7 @@ export default function ForgotPasswordPage() {
           </form>
         ) : (
           <div className="bg-muted/30 rounded-lg p-4 text-center">
-            <p>If an account exists for <span className="font-medium">{email}</span>, you'll receive an email with a link to reset your password.</p>
+            <p>If an account exists for <span className="font-medium">{email}</span>, you&apos;ll receive an email with a link to reset your password.</p>
           </div>
         )}
 

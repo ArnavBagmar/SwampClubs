@@ -8,8 +8,7 @@ export async function POST(request: Request) {
     
     await connectToDatabase();
     
-    // Check if user exists
-    const user = await User.findOne({ email });
+    await User.findOne({ email });
     
     return NextResponse.json({
       success: true,

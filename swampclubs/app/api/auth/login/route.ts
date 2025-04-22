@@ -36,7 +36,6 @@ export async function POST(request: Request) {
       );
     }
     
-    // Generate JWT token
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET || 'fallback-secret-key',
@@ -45,7 +44,6 @@ export async function POST(request: Request) {
     
     console.log(`Login successful for user: ${user._id}`);
     
-    // Return success response
     return NextResponse.json({
       success: true,
       message: 'Login successful',

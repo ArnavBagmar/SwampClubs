@@ -32,7 +32,6 @@ export default function LoginPage() {
       console.log("Login response status:", response.status);
 
       if (response.ok) {
-        // Store token in localStorage
         localStorage.setItem('token', data.token);
         console.log("Token stored successfully");
         
@@ -43,11 +42,10 @@ export default function LoginPage() {
         // Log the error but continue
         console.log("Login failed but continuing anyway:", data.error);
         toast("Notice", {
-          description: "You're being redirected to the dashboard.",
+          description: "You&apos;re being redirected to the dashboard.",
         });
       }
 
-      // Use direct href to login-success page instead of dashboard
       window.location.href = "/dashboard";
       
     } catch (error) {
@@ -55,10 +53,10 @@ export default function LoginPage() {
       
       // Continue to success page even on error
       toast("Notice", {
-        description: "An error occurred, but you're being redirected.",
+        description: "An error occurred, but you&apos;re being redirected.",
       });
       
-      // Redirect to success page after a slight delay
+      // Redirect to dashboard after a slight delay
       setTimeout(() => {
         window.location.href = "/dashboard";
       }, 1000);
@@ -144,13 +142,6 @@ export default function LoginPage() {
               Don&apos;t have an account?{" "}
               <Link href="/signup" className="font-medium text-orange-500 hover:text-orange-600 hover:underline">
                 Sign up
-              </Link>
-            </div>
-            
-            {/* For testing */}
-            <div className="mt-4 text-xs text-center text-muted-foreground">
-              <Link href="/login-success" className="hover:underline">
-                [Test] Go to success page
               </Link>
             </div>
           </form>
