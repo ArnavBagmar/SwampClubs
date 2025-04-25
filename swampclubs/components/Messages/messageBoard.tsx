@@ -3,21 +3,22 @@
 import { useState, useEffect } from "react"
 import MessageList from "./messageList"
 import MessageForm from "./messageForm"
-
-interface Message {
-  _id: string
-  content: string
-  sender: string
-  timestamp: string
-}
+import { Message } from "@/app/types/messages"
 
 export default function MessageBoard() {
   const [messages, setMessages] = useState<Message[]>([])
 
+  // Polling every 2 seconds
   useEffect(() => {
-    fetch("/api/messages")
-      .then(res => res.json())
-      .then(data => setMessages(data))
+    const fetchMessages = async () => {
+      const res = await fetch("/api/messages")
+      const data = await res.json()
+      setMessages(data)
+    }
+
+    fetchMessages()
+    const interval = setInterval(fetchMessages, 2000) // poll every 2s
+    return () => clearInterval(interval)
   }, [])
 
   const handleNewMessage = (message: Message) => {

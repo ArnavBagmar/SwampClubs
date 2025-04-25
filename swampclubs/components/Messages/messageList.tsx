@@ -1,36 +1,17 @@
-"use client";
+import { Message } from "@/app/types/messages"
 
-import { useEffect, useState } from "react";
+interface MessageListProps {
+  messages: Message[];
+}
 
-type Message = {
-  _id: string;
-  user: string;
-  text: string;
-  timestamp: string;
-};
-
-export default function MessageList() {
-  const [messages, setMessages] = useState<Message[]>([]);
-
-  const fetchMessages = async () => {
-    const res = await fetch("/api/messages");
-    const data = await res.json();
-    setMessages(data);
-  };
-
-  useEffect(() => {
-    fetchMessages();
-
-    const interval = setInterval(fetchMessages, 2000); // polling every 2s
-    return () => clearInterval(interval);
-  }, []);
-
+export default function MessageList({ messages }: MessageListProps) {
   return (
-    <div className="h-72 overflow-y-auto bg-white border rounded p-4 mb-4">
-      {messages.map((msg) => (
-        <div key={msg._id} className="mb-2">
-          <div className="font-semibold text-sm text-gray-700">{msg.user}</div>
-          <div className="bg-gray-100 rounded-md p-2 text-sm">{msg.text}</div>
+    <div className="space-y-4">
+      {messages.map((message, index) => (
+        <div key={message._id || index} className="p-3 border rounded-lg bg-gray-50">
+          <div className="text-sm font-semibold">{message.user}</div>
+          <div className="text-base">{message.text}</div>
+          <div className="text-xs text-gray-500">{message.timestamp ? new Date(message.timestamp).toLocaleTimeString() : "Invalid date"}</div>
         </div>
       ))}
     </div>

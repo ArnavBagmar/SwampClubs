@@ -1,8 +1,11 @@
-"use client";
-
 import { useState } from "react";
+import { Message } from "@/app/types/messages";
 
-export default function MessageForm() {
+interface MessageFormProps {
+  onNewMessage: (message: Message) => void;
+}
+
+export default function MessageForm({ onNewMessage }: MessageFormProps) {
   const [text, setText] = useState("");
   const [user, setUser] = useState("Anonymous");
 
@@ -11,12 +14,18 @@ export default function MessageForm() {
 
     if (!text.trim()) return;
 
-    await fetch("/api/messages", {
+    const res = await fetch("/api/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user, text }),
+      body: JSON.stringify({
+        user,
+        text,
+        timestamp: new Date().toISOString(),
+      }),
     });
 
+    const savedMessage = await res.json(); // Get Mongo-inserted message
+    onNewMessage(savedMessage);            // Add it to local state
     setText("");
   };
 
@@ -45,4 +54,3 @@ export default function MessageForm() {
     </form>
   );
 }
-
