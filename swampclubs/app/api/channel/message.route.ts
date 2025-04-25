@@ -1,3 +1,5 @@
+// /api/channel/message.route.ts
+
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Message from './message.model';

@@ -44,12 +44,12 @@ export default function ClubsPage() {
       <header className="border-b">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2 font-bold">
-            <Link href="/">
+            <Link href="/dashboard">
               <div className="size-8 rounded-lg bg-gradient-to-br from-orange-500 to-blue-600 flex items-center justify-center text-primary-foreground">
                 SC
               </div>
             </Link>
-            <Link href="/">
+            <Link href="/dashboard">
               <span>SwampClubs</span>
             </Link>
           </div>
@@ -145,6 +145,7 @@ function renderClubGrid(clubs, isLoading) {
                 <Users className="size-4 mr-1" />
                 <span>{club.members} members</span>
               </div>
+              <Link href={`/clubs/discussion`}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -152,6 +153,7 @@ function renderClubGrid(clubs, isLoading) {
               >
                 Join Chat
               </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

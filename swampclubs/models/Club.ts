@@ -1,3 +1,5 @@
+//model/Club.ts
+
 import mongoose from 'mongoose';
 
 export interface IClub extends mongoose.Document {
