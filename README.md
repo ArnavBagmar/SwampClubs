@@ -37,7 +37,7 @@ SwampClubs is a web application designed to connect University of Florida studen
 
 1. Clone the repository
    ```
-   git clone https://github.com/yourusername/swampclubs.git
+   git clone https://github.com/ArnavBagmar/swampclubs.git
    cd swampclubs
    ```
 
