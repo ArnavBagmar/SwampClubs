@@ -100,7 +100,7 @@ export default function SignupPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="name@gmail.com"
+                  placeholder="name@ufl.edu"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
