@@ -1,5 +1,4 @@
 "use client"
-
 import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
@@ -44,7 +43,10 @@ export default function ForgotPasswordPage() {
         description: "There was a problem sending the reset link. Please try again.",
         style: { backgroundColor: "var(--destructive)", color: "var(--destructive-foreground)" },
       })
+    } finally {
+      setIsLoading(false) // Make sure to reset loading state
     }
+  }; // <-- Missing closing curly brace for handleSubmit function
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
