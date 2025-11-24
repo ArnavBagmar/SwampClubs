@@ -1,12 +1,12 @@
 // /api/channel/message.route.ts
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
-import Message from './message.model';
-import { getServerSession } from 'next-auth';
+import Message from '@/models/message.model';
+import { getAuthUser } from '@/lib/auth';
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { channelId: string } }
 ) {
   try {
@@ -17,32 +17,32 @@ export async function GET(
       .limit(50);
     
     return NextResponse.json(messages);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
   }
 }
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { channelId: string } }
 ) {
   try {
-    const session = await getServerSession();
-    if (!session) {
+    const user = getAuthUser(request);
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { content, attachments } = await request.json();
+    const { content } = await request.json();
     await connectToDatabase();
     
     const message = await Message.create({
       content,
       channelId: params.channelId,
-      createdBy: session.user?.email || null
+      createdBy: user.userId
     });
 
     return NextResponse.json(message);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to create message' }, { status: 500 });
   }
 }

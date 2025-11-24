@@ -8,8 +8,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+interface Club {
+  _id: string;
+  name: string;
+  category: string;
+  description?: string;
+  members?: number;
+}
+
 export function PopularClubsSection() {
-  const [clubs, setClubs] = useState([])
+  const [clubs, setClubs] = useState<Club[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState("all")
   
@@ -36,7 +44,7 @@ export function PopularClubsSection() {
     fetchClubs()
   }, [selectedCategory])
 
-  const getClubsByCategory = (category) => {
+  const getClubsByCategory = (category: string) => {
     if (category === "all") {
       return clubs.slice(0, 6)
     }
@@ -46,7 +54,7 @@ export function PopularClubsSection() {
       .slice(0, 6)
   }
   
-  const renderClubGrid = (category) => {
+  const renderClubGrid = (category: string) => {
     if (isLoading) {
       return (
         <div className="flex justify-center items-center py-12">
@@ -69,7 +77,7 @@ export function PopularClubsSection() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {clubsToShow.map((club, i) => (
           <motion.div
-            key={club.id || i}
+            key={club._id || i}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

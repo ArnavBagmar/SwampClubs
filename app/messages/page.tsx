@@ -1,17 +1,36 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "sonner"
 
-export default function DiscussionBoardPage({ clubId }: { clubId: string }) {
-  const [channels, setChannels] = useState([])
+interface Channel {
+  _id: string;
+  name: string;
+  description?: string;
+}
+
+interface Message {
+  _id: string;
+  content: string;
+  author?: {
+    name: string;
+    email: string;
+  };
+  createdAt?: string;
+}
+
+export default function DiscussionBoardPage() {
+  const searchParams = useSearchParams()
+  const clubId = searchParams.get("clubId") || ""
+  const [channels, setChannels] = useState<Channel[]>([])
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null)
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState("")
   const [newChannelName, setNewChannelName] = useState("")
   const [newChannelDescription, setNewChannelDescription] = useState("")
@@ -19,6 +38,7 @@ export default function DiscussionBoardPage({ clubId }: { clubId: string }) {
 
   // Fetch channels when the clubId is available
   useEffect(() => {
+    if (!clubId) return
     fetch(`/api/channels/${clubId}`)
       .then(res => res.json())
       .then(data => setChannels(data))
@@ -27,7 +47,7 @@ export default function DiscussionBoardPage({ clubId }: { clubId: string }) {
 
   // Fetch messages when a channel is selected
   useEffect(() => {
-    if (selectedChannelId) {
+    if (selectedChannelId && clubId) {
       fetch(`/api/channels/${clubId}/message/${selectedChannelId}`)
         .then(res => res.json())
         .then(data => setMessages(data.reverse()))
@@ -37,7 +57,7 @@ export default function DiscussionBoardPage({ clubId }: { clubId: string }) {
 
   // Handle sending a new message
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedChannelId) return
+    if (!newMessage.trim() || !selectedChannelId || !clubId) return
 
     const res = await fetch(`/api/channels/${clubId}/message/${selectedChannelId}`, {
       method: "POST",
@@ -56,7 +76,7 @@ export default function DiscussionBoardPage({ clubId }: { clubId: string }) {
 
   // Handle creating a new channel
   const handleCreateChannel = async () => {
-    if (!newChannelName.trim()) {
+    if (!newChannelName.trim() || !clubId) {
       toast("Channel name is required")
       return
     }
@@ -81,6 +101,15 @@ export default function DiscussionBoardPage({ clubId }: { clubId: string }) {
     } else {
       toast("Failed to create channel")
     }
+  }
+
+  if (!clubId) {
+    return (
+      <div className="container py-6">
+        <h1 className="text-2xl font-bold mb-4">Discussion Board</h1>
+        <p className="text-muted-foreground">Please select a club to view messages.</p>
+      </div>
+    )
   }
 
   return (

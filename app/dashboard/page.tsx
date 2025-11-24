@@ -134,11 +134,11 @@ export default function DashboardPage() {
     window.location.href = "/"
   }
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value)
   }
 
-  const handleToggleAttending = (eventId) => {
+  const handleToggleAttending = (eventId: number) => {
     // This would be an API call in a real app
     console.log(`Toggle attending for event ${eventId}`)
   }

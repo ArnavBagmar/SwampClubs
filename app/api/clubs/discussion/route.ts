@@ -1,7 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next"
+import { NextResponse } from "next/server"
 
 // This will be the same board for all clubs
-let discussionBoard = {
+const discussionBoard = {
   _id: "12345", // Example static board ID
   name: "General Discussion",
   description: "A discussion board for all clubs",
@@ -17,22 +17,18 @@ let messages = [
   },
 ]
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "GET") {
-    return res.status(200).json({ board: discussionBoard, messages })
-  }
+export async function GET() {
+  return NextResponse.json({ board: discussionBoard, messages })
+}
 
-  if (req.method === "POST") {
-    const { content } = req.body
-    const newMessage = {
-      _id: `msg${messages.length + 1}`,
-      content,
-      author: { name: "User", email: "user@example.com" },
-      createdAt: new Date().toISOString(),
-    }
-    messages = [newMessage, ...messages]
-    return res.status(201).json(newMessage)
+export async function POST(request: Request) {
+  const { content } = await request.json()
+  const newMessage = {
+    _id: `msg${messages.length + 1}`,
+    content,
+    author: { name: "User", email: "user@example.com" },
+    createdAt: new Date().toISOString(),
   }
-
-  res.status(405).json({ message: "Method not allowed" })
+  messages = [newMessage, ...messages]
+  return NextResponse.json(newMessage, { status: 201 })
 }

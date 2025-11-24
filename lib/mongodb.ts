@@ -6,14 +6,15 @@ interface MongooseCache {
 }
 
 declare global {
-  // Change var to const
-  const mongoose: MongooseCache | undefined;
+  // eslint-disable-next-line no-var
+  var mongoose: MongooseCache | undefined;
 }
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable');
+// Don't throw during build time - only at runtime
+if (!MONGODB_URI && typeof window === 'undefined' && process.env.NODE_ENV !== 'production') {
+  console.warn('MONGODB_URI is not defined. Database operations will fail at runtime.');
 }
 
 // Change let to const

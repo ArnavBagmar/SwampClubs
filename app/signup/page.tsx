@@ -15,7 +15,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
 
@@ -52,8 +52,9 @@ export default function SignupPage() {
       
     } catch (error) {
       console.error("Signup error:", error);
+      const errorMessage = error instanceof Error ? error.message : "There was a problem creating your account. Please try again.";
       toast("Error", {
-        description: error.message || "There was a problem creating your account. Please try again.",
+        description: errorMessage,
         style: { backgroundColor: "var(--destructive)", color: "var(--destructive-foreground)" },
       });
     } finally {

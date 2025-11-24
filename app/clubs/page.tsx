@@ -8,8 +8,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+interface Club {
+  _id: string;
+  name: string;
+  category: string;
+  description?: string;
+  members?: number;
+}
+
 export default function ClubsPage() {
-  const [clubs, setClubs] = useState([]);
+  const [clubs, setClubs] = useState<Club[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
   
@@ -35,7 +43,7 @@ export default function ClubsPage() {
     fetchClubs();
   }, [selectedCategory]);
   
-  const handleCategoryChange = (category) => {
+  const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
   };
   
@@ -109,7 +117,7 @@ export default function ClubsPage() {
   )
 }
 
-function renderClubGrid(clubs, isLoading) {
+function renderClubGrid(clubs: Club[], isLoading: boolean) {
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
@@ -131,7 +139,7 @@ function renderClubGrid(clubs, isLoading) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {clubs.map((club) => (
-        <Card key={club.id} className="h-full overflow-hidden border-border/40 bg-gradient-to-b from-background to-muted/10 backdrop-blur transition-all hover:shadow-md">
+        <Card key={club._id} className="h-full overflow-hidden border-border/40 bg-gradient-to-b from-background to-muted/10 backdrop-blur transition-all hover:shadow-md">
           <CardContent className="p-6 flex flex-col h-full">
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-xl font-bold">{club.name}</h3>

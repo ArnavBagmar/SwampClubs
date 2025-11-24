@@ -1,13 +1,13 @@
 // /api/channel/channel.route.ts
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
-import Channel from './channel.model';
-import { getServerSession } from 'next-auth';
+import Channel from '@/models/channel.model';
+import { getAuthUser } from '@/lib/auth';
 
 // Fetch the single channel by clubId (one channel per club)
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { clubId: string } }
 ) {
   try {
@@ -19,19 +19,19 @@ export async function GET(
     }
 
     return NextResponse.json(channel);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch channel' }, { status: 500 });
   }
 }
 
 // Create a new channel for a club (although this will be done only once per club)
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { clubId: string } }
 ) {
   try {
-    const session = await getServerSession();
-    if (!session) {
+    const user = getAuthUser(request);
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -49,11 +49,11 @@ export async function POST(
       description,
       isPrivate,
       clubId: params.clubId,
-      createdBy: session.user?.email || null
+      createdBy: user.userId
     });
 
     return NextResponse.json(channel);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to create channel' }, { status: 500 });
   }
 }
